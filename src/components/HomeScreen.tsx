@@ -1,4 +1,3 @@
-import React from 'react';
 import type { PracticeMode } from '../types';
 import { useApp } from '../AppContext';
 import { COUNT_OPTIONS } from '../logic';
