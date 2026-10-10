@@ -1,4 +1,3 @@
-import React from 'react';
 import { AppProvider, useApp } from './AppContext';
 import { HomeScreen } from './components/HomeScreen';
 import { QuizScreen } from './components/QuizScreen';

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useCallback } from 'react';
+import { createContext, useContext, useReducer, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import type { AppScreen, PracticeMode, QuizState, QuestionAttempt } from './types';
 import { generateSession, checkAnswer, DEFAULT_QUESTIONS, MIN_QUESTIONS, MAX_QUESTIONS } from './logic';
