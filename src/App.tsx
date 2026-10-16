@@ -2,6 +2,7 @@ import { AppProvider, useApp } from './AppContext';
 import { HomeScreen } from './components/HomeScreen';
 import { QuizScreen } from './components/QuizScreen';
 import { ResultsScreen } from './components/ResultsScreen';
+import { TableSelectScreen } from './components/TableSelectScreen';
 import './index.css';
 
 function AppRouter() {
@@ -10,6 +11,8 @@ function AppRouter() {
   switch (state.screen) {
     case 'home':
       return <HomeScreen />;
+    case 'table-select':
+      return <TableSelectScreen />;
     case 'quiz':
       return state.quiz ? <QuizScreen /> : <HomeScreen />;
     case 'results':

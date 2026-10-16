@@ -7,6 +7,7 @@ const MODE_LABELS: Record<string, string> = {
   multiplication: 'Multiplication Tables',
   'squares-cubes': 'Squares and Cubes',
   mixed: 'Mixed Practice',
+  'table-revision': 'Table Revision',
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -23,6 +24,7 @@ export function QuizScreen() {
   const quiz = state.quiz!;
 
   const { mode, questions, currentIndex, phase, attempts } = quiz;
+  const isRevision = mode === 'table-revision';
 
   const totalQ = questions.length;
   const currentQ = questions[currentIndex];
@@ -53,6 +55,18 @@ export function QuizScreen() {
   useEffect(() => {
     if (phase !== 'feedback' && phase !== 'complete') return;
 
+    // Table revision: if correct → advance immediately; if wrong → wait for user
+    if (isRevision) {
+      const lastAttempt = attempts[attempts.length - 1];
+      if (lastAttempt?.isCorrect) {
+        // Instant advance (tiny delay so the green flash is visible)
+        const t = setTimeout(() => nextQuestion(), 400);
+        return () => clearTimeout(t);
+      }
+      // Wrong answer — no auto-advance; user presses the Next button
+      return;
+    }
+
     feedbackStartRef.current = performance.now();
 
     // Animate the drain bar via rAF
@@ -74,7 +88,7 @@ export function QuizScreen() {
       if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [phase, nextQuestion]);
+  }, [phase, nextQuestion, isRevision, attempts]);
 
   // ── Submit answer ──────────────────────────────────────────────────────────
   const handleSubmit = useCallback(() => {
@@ -138,12 +152,20 @@ export function QuizScreen() {
     ? Math.max(0, 100 - (feedbackElapsed / AUTO_ADVANCE_MS) * 100)
     : 100;
 
+  // Is this a wrong answer in revision mode? (manual advance)
+  const isRevisionWrong = isRevision && isFeedbackPhase && currentAttempt && !currentAttempt.isCorrect;
+
   return (
     <main className="page quiz-page">
       <div className="container">
         {/* Top bar */}
         <div className="quiz-topbar">
-          <span className="quiz-mode-label">{MODE_LABELS[mode]}</span>
+          <span className="quiz-mode-label">
+            {MODE_LABELS[mode]}
+            {isRevision && quiz.tableNumber != null && (
+              <span className="quiz-table-badge"> — Table of {quiz.tableNumber}</span>
+            )}
+          </span>
           <button className="quiz-back-btn" onClick={goHome} aria-label="Return to home screen">
             Home
           </button>
@@ -232,32 +254,47 @@ export function QuizScreen() {
         ) : (
           currentAttempt && (
             <div
-              className={`feedback-card ${currentAttempt.isCorrect ? 'correct' : 'incorrect'}`}
+              className={`feedback-card ${currentAttempt.isCorrect ? 'correct' : 'incorrect'}${isRevision ? ' revision' : ''}`}
               aria-live="assertive"
-              onClick={handleEarlyAdvance}
-              style={{ cursor: 'pointer' }}
-              title="Click or press Enter to advance now"
+              onClick={!isRevisionWrong ? handleEarlyAdvance : undefined}
+              style={{ cursor: isRevisionWrong ? 'default' : 'pointer' }}
+              title={isRevisionWrong ? undefined : 'Click or press Enter to advance now'}
             >
-              {/* Drain bar */}
-              <div className="feedback-drain-track">
-                <div
-                  className={`feedback-drain-fill ${currentAttempt.isCorrect ? 'correct' : 'incorrect'}`}
-                  style={{ width: `${drainPct}%` }}
-                />
-              </div>
+              {/* Drain bar — only shown in standard mode */}
+              {!isRevision && (
+                <div className="feedback-drain-track">
+                  <div
+                    className={`feedback-drain-fill ${currentAttempt.isCorrect ? 'correct' : 'incorrect'}`}
+                    style={{ width: `${drainPct}%` }}
+                  />
+                </div>
+              )}
 
               <div className="feedback-label">
-                {currentAttempt.isCorrect ? 'Correct' : 'Incorrect'}
+                {currentAttempt.isCorrect ? '✓ Correct!' : '✗ Incorrect'}
               </div>
               {!currentAttempt.isCorrect && (
                 <div className="feedback-answer-text">
-                  Correct answer: {currentQ.answer}
+                  Correct answer: <strong>{currentQ.answer}</strong>
                 </div>
               )}
               <div className="feedback-time">{formatTime(currentAttempt.timeTakenMs)}</div>
-              <div className="feedback-hint">
-                {phase === 'complete' ? 'Advancing to results…' : 'Advancing to next question…'}
-              </div>
+
+              {/* In revision mode: manual Next button for wrong answers */}
+              {isRevisionWrong ? (
+                <button
+                  className="btn btn-next-revision full-width"
+                  onClick={handleEarlyAdvance}
+                  id="revision-next-btn"
+                  aria-label={phase === 'complete' ? 'See results' : 'Next question'}
+                >
+                  {phase === 'complete' ? 'See Results →' : 'Next Question →'}
+                </button>
+              ) : !isRevision ? (
+                <div className="feedback-hint">
+                  {phase === 'complete' ? 'Advancing to results…' : 'Advancing to next question…'}
+                </div>
+              ) : null}
             </div>
           )
         )}

@@ -17,6 +17,8 @@ interface AppState {
 type Action =
   | { type: 'SET_QUESTION_COUNT'; count: number }
   | { type: 'START_QUIZ'; mode: PracticeMode }
+  | { type: 'START_TABLE_REVISION'; tableNumber: number }
+  | { type: 'GO_TABLE_SELECT' }
   | { type: 'SUBMIT_ANSWER'; input: string }
   | { type: 'NEXT_QUESTION' }
   | { type: 'GO_HOME' }
@@ -35,6 +37,21 @@ function initialQuiz(mode: PracticeMode, count: number): QuizState {
     attempts: [],
     questionStartTime: now,
     sessionStartTime: now,
+  };
+}
+
+function initialTableRevisionQuiz(tableNumber: number): QuizState {
+  const now = performance.now();
+  return {
+    mode: 'table-revision',
+    questionCount: 8,
+    questions: generateSession('table-revision', 8, tableNumber),
+    currentIndex: 0,
+    phase: 'answering',
+    attempts: [],
+    questionStartTime: now,
+    sessionStartTime: now,
+    tableNumber,
   };
 }
 
@@ -57,6 +74,16 @@ function reducer(state: AppState, action: Action): AppState {
         quiz: initialQuiz(action.mode, state.questionCount),
         questionCount: state.questionCount,
       };
+
+    case 'START_TABLE_REVISION':
+      return {
+        ...state,
+        screen: 'quiz',
+        quiz: initialTableRevisionQuiz(action.tableNumber),
+      };
+
+    case 'GO_TABLE_SELECT':
+      return { ...state, screen: 'table-select', quiz: null };
 
     case 'SUBMIT_ANSWER': {
       const quiz = state.quiz!;
@@ -109,6 +136,14 @@ function reducer(state: AppState, action: Action): AppState {
 
     case 'RESTART_QUIZ': {
       const mode = state.quiz?.mode ?? 'multiplication';
+      const tableNumber = state.quiz?.tableNumber;
+      if (mode === 'table-revision' && tableNumber != null) {
+        return {
+          ...state,
+          screen: 'quiz',
+          quiz: initialTableRevisionQuiz(tableNumber),
+        };
+      }
       return {
         ...state,
         screen: 'quiz',
@@ -127,6 +162,8 @@ interface AppContextValue {
   state: AppState;
   setQuestionCount: (count: number) => void;
   startQuiz: (mode: PracticeMode) => void;
+  startTableRevision: (tableNumber: number) => void;
+  goTableSelect: () => void;
   submitAnswer: (input: string) => void;
   nextQuestion: () => void;
   goHome: () => void;
@@ -146,6 +183,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     (mode: PracticeMode) => dispatch({ type: 'START_QUIZ', mode }),
     []
   );
+  const startTableRevision = useCallback(
+    (tableNumber: number) => dispatch({ type: 'START_TABLE_REVISION', tableNumber }),
+    []
+  );
+  const goTableSelect = useCallback(() => dispatch({ type: 'GO_TABLE_SELECT' }), []);
   const submitAnswer = useCallback(
     (input: string) => dispatch({ type: 'SUBMIT_ANSWER', input }),
     []
@@ -156,7 +198,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   return (
     <AppContext.Provider
-      value={{ state, setQuestionCount, startQuiz, submitAnswer, nextQuestion, goHome, restartQuiz }}
+      value={{ state, setQuestionCount, startQuiz, startTableRevision, goTableSelect, submitAnswer, nextQuestion, goHome, restartQuiz }}
     >
       {children}
     </AppContext.Provider>

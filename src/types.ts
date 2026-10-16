@@ -31,11 +31,11 @@ export interface SessionStats {
 
 // ─── Practice Mode ───────────────────────────────────────────────────────────
 
-export type PracticeMode = 'multiplication' | 'squares-cubes' | 'mixed';
+export type PracticeMode = 'multiplication' | 'squares-cubes' | 'mixed' | 'table-revision';
 
 // ─── App Screen ───────────────────────────────────────────────────────────────
 
-export type AppScreen = 'home' | 'quiz' | 'results';
+export type AppScreen = 'home' | 'quiz' | 'results' | 'table-select';
 
 // ─── Quiz State ───────────────────────────────────────────────────────────────
 
@@ -50,4 +50,6 @@ export interface QuizState {
   attempts: QuestionAttempt[];
   questionStartTime: number;   // performance.now() timestamp
   sessionStartTime: number;    // performance.now() timestamp
+  /** Set when mode === 'table-revision' — the table being drilled (13-25) */
+  tableNumber?: number;
 }

@@ -193,7 +193,17 @@ export const MIN_QUESTIONS = COUNT_OPTIONS[0];          // 5
 export const MAX_QUESTIONS = COUNT_OPTIONS[COUNT_OPTIONS.length - 1]; // 30
 export const DEFAULT_QUESTIONS = 10;
 
-export function generateSession(mode: PracticeMode, count: number): Question[] {
+/** Generate multiples ×2 through ×9 of a given table number in random order.
+ *  ×1 (trivially the number itself) and ×10 (just append a zero) are skipped. */
+function generateTableRevisionSession(tableNumber: number): Question[] {
+  const questions: Question[] = [];
+  for (let b = 2; b <= 9; b++) {
+    questions.push(makeMultiplication(tableNumber, b));
+  }
+  return shuffle(questions);
+}
+
+export function generateSession(mode: PracticeMode, count: number, tableNumber?: number): Question[] {
   // Clamp to valid options; snap to nearest multiple-of-5 if needed
   const safe = Math.max(MIN_QUESTIONS, Math.min(MAX_QUESTIONS, count));
   switch (mode) {
@@ -203,6 +213,8 @@ export function generateSession(mode: PracticeMode, count: number): Question[] {
       return generateSquaresCubesSession(safe);
     case 'mixed':
       return generateMixedSession(safe);
+    case 'table-revision':
+      return generateTableRevisionSession(tableNumber ?? 13);
   }
 }
 

@@ -31,7 +31,7 @@ const MODES: {
 // Multiples of 5: 5, 10, 15, 20, 25, 30
 
 export function HomeScreen() {
-  const { state, setQuestionCount, startQuiz } = useApp();
+  const { state, setQuestionCount, startQuiz, goTableSelect } = useApp();
   const { questionCount } = state;
 
   return (
@@ -66,6 +66,50 @@ export function HomeScreen() {
 
         {/* Mode cards */}
         <div className="mode-cards" role="list">
+
+          {/* Table Revision — Mode 01 */}
+          <article
+            className="mode-card mode-card-revision"
+            role="listitem"
+            onClick={goTableSelect}
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                goTableSelect();
+              }
+            }}
+          >
+            <div className="mode-card-badge">
+              <span className="mode-card-number">01</span>
+              Mode
+            </div>
+            <h2 className="mode-card-title">Table Revision</h2>
+            <p className="mode-card-desc">
+              Pick any table from 13 to 25. All 10 multiples (×1–×10) are served in
+              random order. Correct answers advance instantly — wrong ones show the
+              answer so you can learn before moving on.
+            </p>
+            <div className="mode-card-tags">
+              <span className="tag">Tables 13–25</span>
+              <span className="tag">8 questions</span>
+              <span className="tag">×2 – ×9 only</span>
+              <span className="tag">Instant feedback</span>
+            </div>
+            <button
+              className="btn btn-revision"
+              onClick={(e) => {
+                e.stopPropagation();
+                goTableSelect();
+              }}
+              id="start-table-revision"
+              aria-label="Start Table Revision — choose a table"
+            >
+              Choose Table →
+            </button>
+          </article>
+
+          {/* Remaining modes — 02, 03, 04 */}
           {MODES.map((mode, i) => (
             <article
               key={mode.id}
@@ -81,7 +125,7 @@ export function HomeScreen() {
               }}
             >
               <div className="mode-card-badge">
-                <span className="mode-card-number">0{i + 1}</span>
+                <span className="mode-card-number">0{i + 2}</span>
                 Mode
               </div>
               <h2 className="mode-card-title">{mode.title}</h2>
@@ -90,7 +134,6 @@ export function HomeScreen() {
                 {mode.tags.map((tag) => (
                   <span key={tag} className="tag">{tag}</span>
                 ))}
-                {/* Show selected count as a tag */}
                 <span className="tag tag-count">{questionCount} questions</span>
               </div>
               <button

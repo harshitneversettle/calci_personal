@@ -801,3 +801,167 @@ h1, h2, h3, h4 {
     margin-bottom: 1.5rem;
   }
 }
+
+/* ─── Table Select Screen ───────────────────────────────────────────────────── */
+
+.table-select-page {
+  justify-content: flex-start;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+.table-select-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.table-select-eyebrow {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+  margin-bottom: 0.6rem;
+}
+
+.table-select-title {
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--white);
+  margin-bottom: 0.5rem;
+}
+
+.table-select-sub {
+  font-size: 0.88rem;
+  color: var(--gray-300);
+  line-height: 1.5;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.table-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 0.6rem;
+  margin-bottom: 2rem;
+}
+
+.table-grid-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 0.5rem;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease, transform 80ms ease;
+  font-family: var(--font-sans);
+}
+
+.table-grid-btn:hover {
+  background: var(--surface-2);
+  border-color: var(--gray-400);
+  transform: translateY(-2px);
+}
+
+.table-grid-btn:active {
+  transform: scale(0.96);
+}
+
+.table-grid-num {
+  font-family: var(--font-mono);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1;
+}
+
+.table-grid-hint {
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--gray-400);
+  text-transform: uppercase;
+}
+
+.table-select-footer {
+  margin-top: 0.5rem;
+}
+
+/* ─── Table Revision button variants ────────────────────────────────────────── */
+
+.btn-revision {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  color: #a8d8ff;
+  border: 1px solid #1e4976;
+}
+
+.btn-revision:hover {
+  background: linear-gradient(135deg, #1e2040 0%, #1a2850 50%, #144080 100%);
+  color: #cde8ff;
+  border-color: #2a6099;
+  opacity: 1;
+}
+
+.mode-card-revision {
+  border-color: #1e4976;
+  background: linear-gradient(160deg, var(--surface) 60%, #0d1a2e 100%);
+}
+
+.mode-card-revision:hover {
+  border-color: #2a6099;
+  background: linear-gradient(160deg, var(--surface-2) 60%, #0f2240 100%);
+}
+
+.btn-next-revision {
+  background: linear-gradient(135deg, #0f2240 0%, #1a3a6e 100%);
+  color: #a8d8ff;
+  border: 1px solid #2a5a99;
+  margin-top: 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: background 140ms ease, border-color 140ms ease, transform 80ms ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.btn-next-revision:hover {
+  background: linear-gradient(135deg, #142d55 0%, #1f4a88 100%);
+  border-color: #3a70bb;
+  color: #cde8ff;
+}
+
+.btn-next-revision:active {
+  transform: scale(0.97);
+}
+
+/* ─── Quiz top-bar table badge ───────────────────────────────────────────────── */
+
+.quiz-table-badge {
+  color: #7ab8f5;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+/* ─── Feedback card revision variant ────────────────────────────────────────── */
+
+.feedback-card.revision {
+  padding-bottom: 1rem;
+}
+
+.feedback-card.revision .feedback-label {
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
